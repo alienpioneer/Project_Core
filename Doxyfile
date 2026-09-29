@@ -1,0 +1,19 @@
+# @file Doxyfile
+# @author Alexandru ALEXANDRESCU
+# All rights reserved.
+# Doxyfile 1.9.1
+
+DOXYFILE_ENCODING       = UTF-8
+PROJECT_NAME            = "Project CORE"
+OUTPUT_DIRECTORY        = deploy/doxygen
+INPUT                   = include/ src/ docs/ examples/templates
+FILE_PATTERNS           = *.hpp *.cpp *.dox
+RECURSIVE               = YES                 # must scan subfolders
+EXTRACT_ALL             = NO
+EXTRACT_PRIVATE         = YES
+HIDE_UNDOC_MEMBERS      = YES
+GENERATE_HTML           = YES
+GENERATE_LATEX          = NO
+EXAMPLE_PATH            = 
+EXTRACT_ALL             = NO                  # only documented items
+EXCLUDE                 = src/main.cpp

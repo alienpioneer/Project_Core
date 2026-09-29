@@ -1,0 +1,5 @@
+build/
+build-coverage/
+build-yocto/
+build-target/
+deploy/

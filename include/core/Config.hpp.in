@@ -1,0 +1,45 @@
+/**
+ * @file Config.hpp.in
+ * @author Alexandru ALEXANDRESCU
+ * All rights reserved.
+ * 
+ */
+
+#pragma once
+#include <cstddef>
+
+/**
+ * @brief Project configuration header
+ * Is generated at compile-time. Consumes the data from cmake/project_config.cmake
+ */
+
+namespace Core
+{
+
+// SERVICES
+inline constexpr std::size_t EVENTS_QUEUE_MAX_SIZE = @EVENTS_QUEUE_MAX_SIZE@;
+
+inline constexpr std::size_t SERVICE_QUEUE_MAX_SIZE = @SERVICE_QUEUE_MAX_SIZE@;
+
+inline constexpr std::size_t MAX_SERVICES = @MAX_SERVICES@;
+
+inline constexpr std::size_t MAX_EVENTS = @MAX_EVENTS@;
+
+// FILE READER
+inline constexpr unsigned int FILE_MAX_SIZE = @FILE_MAX_SIZE@;
+inline constexpr std::size_t MAX_DIRECTORY_TREE = @MAX_DIRECTORY_TREE@;
+
+// CONFIG LOADER
+inline constexpr unsigned int CONFIG_SECTION_MAX_SIZE = @CONFIG_SECTION_MAX_SIZE@;
+inline constexpr unsigned int CONFIG_MAX_SECTIONS = @CONFIG_MAX_SECTIONS@;
+
+}// namespace Core
+
+
+namespace Utils
+{
+
+// LOGGER
+inline constexpr unsigned int LOGGER_MAX_FILES = @LOGGER_MAX_FILES@;
+
+}// namespace Utils

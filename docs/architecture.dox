@@ -1,0 +1,79 @@
+/**
+ * @file architecture.dox
+ * @author Alexandru ALEXANDRESCU
+ * @brief System Architecture Documentation
+ * 
+ * @page ArchitecturePage System Architecture Overview
+ * @brief Event-driven, multi-threaded service architecture
+ *
+ * ## Overview
+ * The architecture is built around:
+ * - @ref EventPage "Event" — main event type - `Core::Event`
+ * - @ref EventManagerPage "Event Manager" — central event dispatcher - `Core::EventManager`
+ * - @ref ServiceBaseQueuePage "ServiceBaseQueue" — base class for thread-isolated asynchronous services - `Core::ServiceBaseQueue`
+ * - @ref ServiceBasePage "ServiceBase" — base class for basic synchronous services that run in the same thread - `Core::ServiceBase`
+ * - @ref ServiceManagerPage "Service Manager" — registry and lifecycle manager for services - `Core::ServiceManager`
+ *
+ * This structure enforces decoupling, thread-safety, and predictable startup/shutdown order.
+ *
+ * ## Ownership & Lifetime
+ * - **EventManager**
+ *   - Must outlive all services.
+ *   - Centralized dispatcher; owns no threads.
+ * - **ServiceManager**
+ *   - Owns all service shared_ptrs and their threads.
+ *   - Must outlive services’ execution.
+ * - **Services (ServiceBaseQueue-derived)**
+ *   - Always created via `std::make_shared`.
+ *   - Never stack-allocated or manually `new` without shared ownership.
+ *   - Must subscribe to events in `init()` only.
+ *
+ * ## Startup Sequence
+ * 1. Create `EventManager` instance
+ * 2. Create `ServiceManager` instance
+ * 3. Create services via `std::make_shared` and register with ServiceManager
+ *    - `init()` called
+ *    - `start()` called
+ *    - Service thread launched via `run()`
+ * 4. Start UI or other layers
+ *
+ * ```text
+ * EventManager
+ *    |
+ *    +--> ServiceManager
+ *           |
+ *           +--> ServiceA (thread)
+ *           +--> ServiceB (thread)
+ *           ...
+ *    +--> UI / other layers
+ * ```
+ *
+ * ## Shutdown Sequence
+ * 1. Stop UI loop
+ * 2. Stop `EventManager` (no more dispatch)
+ * 3. `ServiceManager::stopAll()`
+ *    - Signals `stop()` to each service
+ *    - Joins all service threads
+ * 4. Destroy services, ServiceManager, EventManager
+ *
+ * ## Threading Rules
+ * - Each service runs in its own thread.
+ * - Event dispatching happens in EventManager thread.
+ * - `onEvent()` runs in EventManager thread; must be non-blocking.
+ * - `dispatch()` runs in service thread; must not block queue mutex.
+ * - `dispatchLoop()` must never block.
+ * - Non-blocking and blocking dispatch loops provided (`dispatchLoop()` / `dispatchLoopBlocking()`).
+ *
+ * ## Event & Service Constraints
+ * - Services communicate only via events; no direct calls.
+ * - Each event type has a maximum number of subscribers.
+ * - `ServiceId` and `EventType` enums must be contiguous.
+ * - Maximum limits enforced via static arrays (`max_services`, `max_events`).
+ *
+ * ## Notes
+ * - No detached threads allowed.
+ * - Services must not assume dispatch order.
+ * - Events are processed opportunistically; immediate processing is not guaranteed.
+ * - Critical services should start before others if startup dependencies exist.
+ *
+ */

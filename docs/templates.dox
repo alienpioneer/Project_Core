@@ -1,0 +1,117 @@
+/**
+ * @file CoreServices.dox
+ * @author Alexandru ALEXANDRESCU
+ * @brief Doxygen documentation for the Core services: EventManager, ServiceBaseQueue, ServiceManager
+ * 
+ * 
+ * @page ServicesTemplatesPage Services Templates Overview 
+ *
+ * @section Introduction
+ *
+ * Project CORE is a message-driven service architecture base for embedded systems.
+ *
+ * The basic unit of this architecture is a Service object that inherits from @ref ServiceBaseQueuePage "ServiceBaseQueue" for asyncronous multithreaded operations
+ * or @ref ServiceBasePage "ServiceBase" for synchronous single thread operations.
+ *
+ * @section com Communication Model
+ *
+ * Services never call each other directly.
+ * Communication is performed by publishing events to the EventManager.
+ *
+ * @warning All the services and the CORE are using a common set of enums from the "include_commons" folder. 
+ * @warning Copy it inside your project folder, do not modify it directly. All the event types and services ids MUST extend these files !
+ *
+ * @section temp Templates
+ *
+ * To facilitate service creation a service template is provided in the deploy/templates folder or examples/templates foler internally @ref ServiceTemplatePage "Templates" .
+ *
+ * @section EventManager
+ *
+ * The EventManager is responsible for delivering events to subscribers.
+ *
+ * Responsibilities:
+ * - Maintain subscriber lists for each EventType.
+ * - Provide thread-safe event posting.
+ * - Dispatch events from a dedicated dispatcher thread.
+ *
+ * Internally the EventManager contains:
+ * - a dispatcher thread
+ * - a thread-safe event queue
+ * - a subscriber registry:
+ *
+ * @section ServiceBaseQueue
+ *
+ * ServiceBaseQueue is the base class for all asyncronous application services.
+ *
+ * Each service:
+ * - has a unique ServiceId
+ * - subscribes to events through the EventManager
+ * - handles events via onEvent()
+ *
+ * Provided functionality:
+ * - subscribe(EventType)
+ * - unsubscribe(EventType)
+ * - post events to the EventManager
+ * - `run()` loop to run inside a worker thread;
+ * - `init()` optional initialization method that must be called after the constructor have been called - use it for subscriptions
+ * - `setup()` optional setup method executed once after start, inside the service thread - use it for initialization in the working thread !
+ * - `update()` optional method executed periodically inside the worker thread.
+ * - `run()` exits when `running_ == false` and queue is empty.
+ * - `start()` must be called before entering `run()` loop.
+ * - `stop()` signals termination and unblocks waiting threads.
+ *
+ * @note ServiceBaseQueue does not create threads itself. Thread ownership belongs to
+ * the ServiceManager.
+ * 
+ * @section ServiceManager
+ *
+ * The ServiceManager is responsible for creating and managing services.
+ *
+ * Responsibilities:
+ * - instantiate services
+ * - start service threads
+ * - stop services
+ * - join service threads during shutdown
+ *
+ * Each service thread executes the service run loop.
+ *
+ * @section Lifecycle
+ *
+ * Startup sequence:
+ * 1. Create EventManager
+ * 2. Create ServiceManager
+ * 3. Register services
+ * 4. Start UI loop
+ *
+ * Shutdown sequence:
+ * 1. Stop UI loop
+ * 2. Stop EventManager dispatcher thread
+ * 3. Stop all services
+ * 4. Join service threads
+ * 5. Destroy objects
+ *
+ * @warning The EventManager must remain alive while services may still publish events.
+ * 
+ *
+ * @section examples Examples
+ *
+ * Create your service class, add it to the CMakeLists.txt sources, add the corresponding service id to the ServiceTypes.hpp 
+ * and the coresponding event types to the EventTypes.hpp.
+ * 
+ * The typical worflow is as follows:
+ *
+ *
+ * @code
+ * int main()
+ * {
+ *     auto eventManager = std::make_shared<Core::EventManager>();
+ *     Core::ServiceManager serviceManager(eventManager);
+ *     serviceManager.registerService<SensorService>(...);
+ *     serviceManager.registerService<LoggerService>(...);
+ *     runUiLoop();   // blocks until user exits
+ *     // shutdown happens below
+ * }
+ *  // For tests
+ *  auto& w = sm.get<WifiService>(ServiceId::Wifi);
+ * @endcode
+ */

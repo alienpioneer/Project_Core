@@ -1,0 +1,45 @@
+/**
+ * @file CoreServices.dox
+ * @author Alexandru ALEXANDRESCU
+ * @brief Doxygen documentation for the Core services: EventManager, ServiceBaseQueue, ServiceManager
+ * 
+ * 
+ * @mainpage Project CORE Overview
+ *
+ * @section intro Introduction
+ *
+ * Project CORE is a message-driven service architecture for embedded systems.
+ * All services communicate via a central Event Manager.
+ *
+ * @section arch Architecture
+ * See the @ref ArchitecturePage "Architecture Overview" page for system design.
+ *
+ * @section services Services
+ * See the @ref ServicesPage "Services Overview" group for a list of all runtime services.
+ *
+ *
+ * @section services_tmpl Services Templates
+ * See the @ref ServicesTemplatesPage "Services Templates" group for a service template.
+ *
+ * @section config Project Configuration
+ * See the @ref ProjectConfigurationPage "Project Configuration" group for a project configuration and build guide.
+ *
+ * @section helpers Helper Objects
+ *
+ * See @ref ATimerPage "ATimer"
+ *
+ * See @ref LoggerDoxPage "Logger"
+ * 
+ * See @ref FileLoaderPage "FileLoader"
+ * 
+ * See @ref ConfigLoaderPage "ConfigLoader"
+ *
+ * See @ref AQueuePage "AQueue"
+ *
+ * See @ref AVectorPage "AVector"
+ *
+ * See @ref AMapPage "AMap"
+ *
+ * See @ref SocketPage "Socket"
+ *
+ */

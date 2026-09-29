@@ -1,0 +1,125 @@
+/**
+ * @file Logger.dox
+ * @author Alexandru ALEXANDRESCU
+ * @brief Doxygen documentation for the Utils::Logger module
+ * 
+ * @page LoggerDoxPage Logging Utility
+ * @brief Logging utility with runtime API and compile-time macros.
+ * 
+ * ## Overview
+ * The Logger module provides:
+ * - Thread-safe runtime logging
+ * - File rotation
+ * - Optional console output
+ * - Millisecond timestamps
+ * - Compile-time macros for zero-cost logging in performance-critical paths
+ * 
+ * ## Usage
+ * 
+ * ### 1. Setup (Required before logging)
+ * Call once at application startup:
+ * 
+ * @code{.cpp}
+ * Utils::Logger::init("app_name", "/var/log/");
+ * Utils::Logger::setLevel(Utils::LogLevel::Debug);
+ * Utils::Logger::instance().setMaxSize(1024 * 1024);
+ * Utils::Logger::enableConsole(true);
+ * Utils::Logger::enableMilliseconds(true);
+ * @endcode
+ * 
+ * ### 2. Runtime logging API (Less efficient, flexible)
+ * Use this in normal code paths:
+ * 
+ * @code{.cpp}
+ * Utils::Logger::info("Application started");
+ * Utils::Logger::debug("Value x = 42");
+ * Utils::Logger::warn("This is a warning");
+ * Utils::Logger::error("Something failed");
+ * @endcode
+ * 
+ * ### 3. Compile-time macros (Efficient, filtered by LOG_COMPILED_LEVEL)
+ * These macros are compiled out if the log level is above the compiled level:
+ * 
+ * @code{.cpp}
+ * LOG_INFO("Application started");
+ * LOG_DEBUG("Value x = 42");
+ * LOG_WARN("This is a warning");
+ * LOG_ERROR("Something failed");
+ * @endcode
+ * 
+ * ## Log Levels
+ * | Level | Numeric Value | Macro         |
+ * |-------|---------------|---------------|
+ * | Trace | 0             | LOG_TRACE     |
+ * | Debug | 1             | LOG_DEBUG     |
+ * | Info  | 2             | LOG_INFO      |
+ * | Warn  | 3             | LOG_WARN      |
+ * | Error | 4             | LOG_ERROR     |
+ * | Fatal | 5             | LOG_FATAL     |
+ * 
+ * `LOG_COMPILED_LEVEL` controls which macros are included at compile time.
+ * 
+ * ## Class Reference
+ * ### Utils::Logger
+ * Thread-safe singleton logger.
+ * 
+ * #### Public Methods
+ * - `static Logger& instance()`  
+ *   Returns the singleton instance of Logger.
+ * 
+ * - `static void init(std::string baseName, std::string basePath="")`  
+ *   Initialize the logger. Must be called before `instance()` is accessed.
+ * 
+ * - `static void enableConsole(bool enable)`  
+ *   Enable or disable console output.
+ * 
+ * - `static void enableMilliseconds(bool enable)`  
+ *   Enable or disable milliseconds in timestamps.
+ * 
+ * - `static void setLevel(LogLevel level)`  
+ *   Set runtime log level.
+ * 
+ * - `static void log(LogLevel level, const std::string& msg)`  
+ *   Log a message at the specified level.
+ * 
+ * - `void setMaxSize(std::size_t s)`  
+ *   Set the maximum size of log files before rotation.
+ * 
+ * - `std::size_t getMaxSize() const`  
+ *   Returns the maximum log file size.
+ * 
+ * - `const std::string& getName()`  
+ *   Returns the base log file name.
+ * 
+ * - `const std::string& getPath()`  
+ *   Returns the base path for log files.
+ * 
+ * - Convenience methods: `info()`, `warn()`, `error()`, `debug()`  
+ *   Shortcut runtime log methods.
+ * 
+ * #### Private Methods
+ * - `logImpl(LogLevel level, const std::string& msg)`  
+ *   Internal thread-safe log implementation.
+ * 
+ * - `openFile()`  
+ *   Open the log file.
+ * 
+ * - `rotateFile(std::size_t incoming)`  
+ *   Rotate log files if the max size is exceeded.
+ * 
+ * - `currentSize() const`  
+ *   Returns current log file size.
+ * 
+ * - `makeTimestamp() const`  
+ *   Return timestamp string with optional milliseconds.
+ * 
+ * - `static const char* toString(LogLevel level)`  
+ *   Converts log level to string representation.
+ * 
+ * @section References
+ * 
+ * See @ref LoggerPage "Logger"
+ *
+ * See @ref LoggerConfigPage "Logger Configuration"
+ * 
+ */

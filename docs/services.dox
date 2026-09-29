@@ -1,0 +1,95 @@
+/**
+ * @file CoreServices.dox
+ * @author Alexandru ALEXANDRESCU
+ * @brief Doxygen documentation for the Core services: EventManager, ServiceBaseQueue, ServiceManager
+ * 
+ * @page ServicesPage Core Services
+ *
+ * @brief Event-driven service architecture with thread-isolated service base and centralized manager
+ *
+ * ## Overview
+ * This module provides the building blocks for an event-driven, multi-threaded service architecture:
+ * - @ref EventManagerPage EventManager centralized event dispatching.
+ * - @ref ServiceBaseQueuePage ServiceBaseQueue thread-isolated service base with internal mailbox.
+ * - @ref ServiceManagerPage ServiceManager owns, starts, and stops services safely.
+ * - @ref ServicesTemplatesPage "Services Templates" for a quick start.
+ *
+ * ## EventManager
+ * @brief Central event dispatcher.
+ *
+ * - Handles subscription of services to specific events.
+ * - Dispatches events to subscribed services in a thread-safe manner.
+ * - Can be used with multiple services that communicate via events.
+ *
+ * ### Usage
+ * ```cpp
+ * auto eventManager = std::make_shared<Core::EventManager>();
+ * // services subscribe to events
+ * serviceA->subscribe(Core::EventType::TestEvent);
+ * eventManager->postEvent(Core::Event{Core::EventType::TestEvent, Core::ServiceId::TestService});
+ * ```
+ *
+ * ### Notes
+ * - Must outlive all services.
+ * - Thread-safe dispatching.
+ * - Can use a maximum number of event types and subscribers for static arrays.
+ *
+ * ## ServiceBaseQueue
+ * @brief Base class for services with isolated event queue.
+ *
+ * - Each service runs in its own thread.
+ * - Receives events from EventManager asynchronously.
+ * - Provides `dispatchLoop()` and `dispatchLoopBlocking()` for non-blocking or batch processing.
+ *
+ * ### Usage
+ * ```cpp
+ * class MyService : public Core::ServiceBaseQueue {
+ * public:
+ *     void dispatch(const Core::Event& e) override {
+ *         // process event
+ *     }
+ *
+ *     void update() override {
+ *         // periodic tasks
+ *     }
+ * };
+ *
+ * auto myService = std::make_shared<MyService>(Core::ServiceId::TestService, eventManager);
+ * myService->init();
+ * myService->start();
+ * std::thread t([myService]{ myService->run(); });
+ * ```
+ *
+ * ### Notes
+ * - `start()` must be called before the service thread runs.
+ * - `stop()` signals termination.
+ * - `onEvent()` is non-blocking.
+ * - Event queue size and maximum events per cycle can be configured.
+ *
+ * ## ServiceManager
+ * @brief Manages service lifetimes and threads.
+ *
+ * - Owns all services and their threads.
+ * - Responsible for startup and shutdown order:
+ *   1. EventManager
+ *   2. ServiceManager
+ *   3. Services
+ *   4. UI or other layers
+ * - Provides safe shutdown by stopping services and joining threads.
+ *
+ * ### Usage
+ * ```cpp
+ * Core::ServiceManager sm(eventManager);
+ * sm.registerService<MyService>(Core::ServiceId::TestService, eventManager);
+ * sm.stopAll(); // stops all services and joins threads
+ * ```
+ *
+ * @warning All the services and the CORE are using a common set of enums from the "include_commons" folder. 
+ * @warning Copy it inside your project folder, do not modify it directly. All the event types and services ids MUST extend these files !
+ *
+ * ### Notes
+ * - Services must always be created with `std::make_shared`.
+ * - Do not stack-allocate services.
+ * - `registerService()` calls `init()` and `start()` automatically and launches the service thread.
+ * - No service-specific logic is contained in ServiceManager.
+ */

@@ -1,0 +1,21 @@
+/**
+ * @file architecture.dox
+ * @author Alexandru ALEXANDRESCU
+ * @brief System Architecture Documentation
+ * 
+ * @page ProjectConfigurationPage Project Configuration
+ * @brief Build and configuration instructions
+ *
+ * ## Overview
+ *
+ * The library uses only fixed size containers to enforce deterministic behavior.<br>
+ * Thus, there are some limits that are imposed at build time on the maximum number of services, events, maximum accepted file size, etc.<br>
+ * These limits are modifiable and each modification **must** be followed by a **recompilation**.<br>
+ *
+ * ## Configuration
+ *
+ * These limits and the test options are found in the `cmake/project_config.cmake` script.<br>
+ * They are used to fill the `include/core/Config.hpp.in` file and to generate the Config.hpp header at **compile-time**.
+ *
+ */
+ 

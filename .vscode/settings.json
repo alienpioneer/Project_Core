@@ -1,0 +1,20 @@
+{
+    "doxdocgen.file.copyrightTag": [
+        "@copyright Copyright (c) {2026} Allcare-Innovations",
+        "All rights reserved."
+    ],
+    "doxdocgen.generic.authorTag": "@author {author}",
+    "doxdocgen.generic.authorName": "Alexandru ALEXANDRESCU",
+    "doxdocgen.generic.dateTemplate": "@date {date}",
+    "doxdocgen.generic.dateFormat": "YYYY",
+    "doxdocgen.generic.briefTemplate": "@brief {text}",
+    "doxdocgen.file.fileOrder": [
+    "file",
+    "author",
+    // "brief",
+    // "date",
+    // "empty",
+    "copyright",
+    "empty",
+  ],
+}
